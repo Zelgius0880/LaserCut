@@ -15,7 +15,7 @@ open class Requester(
 ) {
 
     companion object {
-        // const val PORT = "/dev/ttyACM0" // -> With Arduino UNO test chip
+        //const val PORT = "/dev/ttyACM0" // -> With Arduino UNO test chip
         const val PORT = "/dev/ttyUSB0" // -> With real machine
     }
 
@@ -62,12 +62,13 @@ open class Requester(
 
         socket.on("qCount") {
             val current = it.first() as Int
+
             val total = workProgress
 
             if (current == 0) {
-                workProgress = null
                 this.current = 0
-                onProgress(-1, null, true)
+                onProgress(-1, null, workProgress != null)
+                workProgress = null
             } else if (this.current != current) {
                 this.current = current
                 if (total == null) {
@@ -88,16 +89,18 @@ open class Requester(
 
     suspend fun laserTest(): Boolean {
         return emit("stop", "")
-                && emit("clearAlarm", "")
+                && emit("clearAlarm", "2")
+                && emit("clearAlarm", "2")
                 && emit("laserTest", "0.5, 15000, 1000")
     }
 
     suspend fun run(): Boolean {
         val bufferedReader: BufferedReader = File("/home/pi/gcode.gcode").bufferedReader()
         val inputString = bufferedReader.use { it.readText() }
+        val clearAlert = emit("clearAlarm", "2")
+                && emit("clearAlarm", "2")
         val setZero = emit("setZero", "all")
         val stop = emit("stop", "")
-        val clearAlert = emit("clearAlarm", "2")
         return setZero
                 && stop
                 && clearAlert
@@ -114,6 +117,7 @@ open class Requester(
             }
 
             socket.emit(event, *args)
+            delay(100L)
             true
         } else false
 

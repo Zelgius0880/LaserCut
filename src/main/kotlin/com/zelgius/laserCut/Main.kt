@@ -28,7 +28,7 @@ val pi4j: Context = Pi4J.newAutoContext()
 val buttonConfig1: DigitalInputConfigBuilder = DigitalInput.newConfigBuilder(pi4j)
     .id("button 1")
     .name("Press button")
-    .address(23)
+    .address(27)
     .pull(PullResistance.PULL_UP)
     .debounce(3000L)
     .provider("pigpio-digital-input")
@@ -37,7 +37,7 @@ val button1: DigitalInput = pi4j.create(buttonConfig1)
 val buttonConfig2: DigitalInputConfigBuilder = DigitalInput.newConfigBuilder(pi4j)
     .id("button 2")
     .name("Press button")
-    .address(24)
+    .address(22)
     .pull(PullResistance.PULL_UP)
     .debounce(3000L)
     .provider("pigpio-digital-input")
@@ -62,11 +62,13 @@ fun main(args: Array<String>) {
 
         println("Starting")
         display.begin()
+        display.rotate(Display.Rotation.SOUTH)
+
         display {
             display.text("Starting ...")
         }
 
-        val buzzer = RPBuzzer(pi4j, 19)
+        val buzzer = RPBuzzer(pi4j, 12)
 
         button1.addListener({
             if (it.state() == DigitalState.LOW) {
@@ -95,7 +97,7 @@ fun main(args: Array<String>) {
 
             var i = 0
             while (!connected) {
-                if (i % 5 == 0) {
+                if (i % 2 == 0) {
                     display.indeterminateInQueue(i)
                 }
                 delay(10)
@@ -111,7 +113,8 @@ fun main(args: Array<String>) {
                     if (count != null)
                         display.work(count, clearText)
                     else {
-                        display.text("Ready")
+                        if(clearText)
+                            display.text("Ready")
                     }
 
                     display.progress(progress)

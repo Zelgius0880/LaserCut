@@ -1,8 +1,6 @@
 package com.zelgius.laserCut.display
 
 import com.pi4j.io.i2c.I2C
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import java.awt.Graphics2D
 import java.awt.image.BufferedImage
 import java.awt.image.Raster
@@ -58,7 +56,6 @@ class Display(
     }
 
     var vccState = 0
-    private val scope = CoroutineScope(Dispatchers.IO)
 
     /**
      * Returns internal AWT image
@@ -336,5 +333,20 @@ class Display(
 
     private fun i2cWrite(register: Int, value: Int) {
         i2c.writeRegister(register, (value and 0xFF).toByte())
+    }
+
+
+    fun rotate(direction: Rotation) {
+        when(direction) {
+            Rotation.NORTH, Rotation.EAST, Rotation.WEST -> {}
+            Rotation.SOUTH -> {
+                graphics.rotate(Math.PI)
+                graphics.translate(-image.width + 1, -image.height - 1)
+            }
+        }
+    }
+
+    enum class Rotation {
+        NORTH, SOUTH, EAST, WEST
     }
 }

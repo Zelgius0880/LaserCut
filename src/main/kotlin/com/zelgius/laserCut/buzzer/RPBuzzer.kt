@@ -18,7 +18,11 @@ class RPBuzzer(pi4j: Context, address: Int): Buzzer {
         .build())
 
     override fun buzz(note: Note, divider: Float) {
-        if(note == Note.NONE) pwm.off()
+        if(note == Note.NONE) {
+            pwm.off()
+            pwm.frequency = 0
+            pwm.setDutyCycle(0)
+        }
         else pwm.on(30, note.frequency)
     }
 
