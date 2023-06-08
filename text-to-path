@@ -1,0 +1,14 @@
+#!/bin/bash
+
+echo "please check first if \"Aref Ruqaa Ink\" is installed"
+
+current = `pwd`
+cd "$1" || exit 1
+for filename in ./out*.svg; do
+  name=${file##*/}
+  base=${name%.txt}
+  inkscape --export-text-to-path $filename -o $filename
+
+done
+
+cd current

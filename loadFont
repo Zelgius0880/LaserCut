@@ -1,0 +1,4 @@
+#!/bin/bash
+
+mv $1 ~/.local/share/fonts/
+fc-cache -f -v
